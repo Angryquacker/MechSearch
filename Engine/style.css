@@ -36,5 +36,36 @@ section h1 {
 input {
   width: 60%;
   height: 4vh;
-  font-size: 1em;
+  font-size: 2em;
+}
+
+#spinner {
+  height: 10em;
+  width: 10em;
+  border: 2em solid white;
+  border-top: 2em solid darkcyan;
+  animation: spin .5s linear infinite;
+  border-radius: 50%;
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 5em;
+}
+
+@keyframes spin {
+  0% {transform: rotate(0deg)}
+  100% {transform: rotate(360deg)}
+}
+
+#error {
+  color: red;
+  text-align: center;
+  display: none;
+}
+
+#error h1 {
+  font-size: 3em;
+}
+
+#error h2 {
+  font-size: 2em;
 }

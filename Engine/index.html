@@ -3,24 +3,35 @@
   <head>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <link rel="stylesheet" href='style.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="script.js"></script>
     <title>MechSearch</title>
   </head>
   <body>
     <header>
+      <a href="index.html">Home</a>
       <a href='#'>About</a>
       <a href="#">Contact</a>
     </header>
     <section>
       <h1>MechSearch</h1>
-      <form id="search">
-        <input type="text" minlength="1" name="query" id='searchBar'>
-      </form>
+      <input type="text" minlength="1" name="query" id='searchBar'>
     </section>
+    <div id='spinner' style="display: none;">
+
+    </div>
+    <div id='results' style="display: none">
+
+    </div>
+    <div id='error'>
+      <h1>No Results Were Found</h1>
+      <h2>We're Sorry For The Inconvenience</h2>
+    </div>
     <footer>
       <a href="#">Terms</a>
       <a href="#">Privacy</a>
-      <a href="#">Settings</a>
     </footer>
   </body>
 </html>
+
+<!-- PAGE 147 -->
