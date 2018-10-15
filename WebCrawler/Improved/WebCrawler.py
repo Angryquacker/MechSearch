@@ -3,18 +3,32 @@ import requests
 from textblob import TextBlob
 import sqlite3
 from random import randint
+import gc
 import time
 
+
 def save(link, keywords):
-    vals = [link, keywords]
-    conn = sqlite3.connect("links.db")
-    db = conn.cursor()
-    db.execute("INSERT INTO links VALUES (?, ?)", vals)
+    val = [link, keywords]
+    db.execute("INSERT INTO links VALUES (?, ?)", val)
     conn.commit()
-    conn.close()
-    
+
 
 def crawl(url):
+    global counts
+    global conn
+    global db
+    if counts == -1:
+        conn = sqlite3.connect('links.db')
+        db = conn.cursor()
+        counts = 0
+    elif counts == 1000:
+        conn.commit()
+        conn.close()
+        conn = sqlite3.connect('links.db')
+        db = conn.cursor()
+        counts = 0
+    else:
+        counts = counts + 1
     text = requests.get(url).text
     code = BeautifulSoup(text, "html.parser")
     for link in code.findAll('a'):
@@ -25,24 +39,22 @@ def crawl(url):
             plain = requests.get(url).text
             source = BeautifulSoup(plain, "html.parser")
             for p in source.findAll('p'):
-                    keywords = []
-                    para = TextBlob(p.text)
-                    keywords = keywords + para.noun_phrases
-                    save(url, str(keywords))
-    nextOne()
-    
+                keywords = []
+                para = TextBlob(p.text)
+                keywords = keywords + para.noun_phrases
+                save(url, str(keywords))
+    next_one()
 
-def nextOne():
-    conn = sqlite3.connect('links.db')
-    db = conn.cursor()
+
+def next_one():
     db.execute('SELECT link FROM links')
     items = db.fetchall()
     conn.commit()
-    conn.close()
-    time.sleep(1)
     length = len(items)
-    nextLink = str(items[randint(0, length)])
-    nextLink = nextLink[:-3][2:]
-    crawl(nextLink)
+    next_link = str(items[randint(0, length)])
+    next_link = next_link[:-3][2:]
+    crawl(next_link)
 
-crawl("http://www.cnn.com")
+
+counts = -1
+crawl("http://www.youtube.com")
