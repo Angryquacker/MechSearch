@@ -1,34 +1,20 @@
 from bs4 import BeautifulSoup
 import requests
 from textblob import TextBlob
-import sqlite3
+import mysql.connector
 from random import randint
-import gc
-import time
+
+cnx = mysql.connector.connect(user='#', password='#', host='#', database='links')
+db = cnx.cursor()
 
 
 def save(link, keywords):
     val = [link, keywords]
-    db.execute("INSERT INTO links VALUES (?, ?)", val)
-    conn.commit()
+    db.execute("INSERT INTO links(link, keywords) VALUES (%s, %s)", val)
+    cnx.commit()
 
 
 def crawl(url):
-    global counts
-    global conn
-    global db
-    if counts == -1:
-        conn = sqlite3.connect('links.db')
-        db = conn.cursor()
-        counts = 0
-    elif counts == 1000:
-        conn.commit()
-        conn.close()
-        conn = sqlite3.connect('links.db')
-        db = conn.cursor()
-        counts = 0
-    else:
-        counts = counts + 1
     text = requests.get(url).text
     code = BeautifulSoup(text, "html.parser")
     for link in code.findAll('a'):
@@ -47,14 +33,12 @@ def crawl(url):
 
 
 def next_one():
-    db.execute('SELECT link FROM links')
+    db.execute('SELECT * FROM links')
     items = db.fetchall()
-    conn.commit()
-    length = len(items)
-    next_link = str(items[randint(0, length)])
-    next_link = next_link[:-3][2:]
+    length = db.rowcount
+    next_link = items[randint(0, length - 1)]
+    next_link = next_link[1]
     crawl(next_link)
 
 
-counts = -1
 crawl("http://www.youtube.com")
