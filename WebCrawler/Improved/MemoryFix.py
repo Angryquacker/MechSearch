@@ -3,9 +3,7 @@ import requests
 from textblob import TextBlob
 import mysql.connector
 from random import randint
-
-cnx = mysql.connector.connect(user='#', password='#', host='#', database='links')
-db = cnx.cursor()
+import time
 
 
 def save(link, keywords):
@@ -15,6 +13,21 @@ def save(link, keywords):
 
 
 def crawl(url):
+    global cnx
+    global db
+    if count == -1:
+        cnx = mysql.connector.connect(user='#', password='#', host='#', database='links')
+        db = cnx.cursor()
+        count = 0
+    elif count == 1000:
+        cnx.close()
+        db.close()
+        time.sleep(1)
+        cnx = mysql.connector.connect(user='#', password='#', host='#', database='links')
+        db = cnx.cursor()
+        time.sleep(1)
+    else:
+        count = count + 1
     text = requests.get(url).text
     code = BeautifulSoup(text, "html.parser")
     for link in code.findAll('a'):
@@ -40,5 +53,6 @@ def next_one():
     next_link = next_link[1]
     crawl(next_link)
 
-
+global count
+count = -1
 crawl("http://www.youtube.com")
